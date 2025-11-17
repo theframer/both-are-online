@@ -751,15 +751,56 @@
                 </div>
               </div>
 
-              <label className="mt-2 flex items-center gap-2 text-sm">
-                <input
-                  type="checkbox"
-                  checked={agree}
-                  onChange={e=>setAgree(e.target.checked)}
-                  className="accent-[var(--accent)]"
-                />
-                I accept the<strong>Terms & Conditions</strong>
-              </label>
+              <label
+  style={{
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    gap: "0.5rem",
+    width: "100%",
+    maxWidth: "100%",
+    marginTop: "0.5rem",
+    padding: 0,
+    boxSizing: "border-box",
+    textAlign: "left",
+    flexWrap: "nowrap",
+  }}
+>
+  <input
+    type="checkbox"
+    checked={agree}
+    onChange={(e) => setAgree(e.target.checked)}
+    style={{
+      WebkitAppearance: "checkbox",
+      appearance: "checkbox",
+      width: "18px",
+      height: "18px",
+      margin: 0,
+      padding: 0,
+      borderRadius: "4px",
+      border: "1px solid rgba(255,255,255,0.08)",
+      background: "transparent",
+      boxShadow: "none",
+      flex: "0 0 auto",
+      verticalAlign: "middle",
+    }}
+    aria-label="Agree to terms"
+  />
+
+  <span
+    style={{
+      display: "inline-flex",
+      alignItems: "center",
+      gap: "0.35rem",
+      whiteSpace: "nowrap",
+    }}
+  >
+    <span>I accept the</span>
+    <strong style={{ marginLeft: "0.125rem" }}>Terms &amp; Conditions</strong>
+  </span>
+</label>
+
 
               <div className="pt-4 grid grid-cols-1 md:grid-cols-3 gap-3">
                 <button

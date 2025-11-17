@@ -1187,6 +1187,7 @@ input[type="time"] {
 }
 
 
+
 /* fallback tighter rule for older browsers */
 @supports not (appearance: textfield) {
   input[type="date"], input[type="time"] { padding-right: 2.2rem; }
