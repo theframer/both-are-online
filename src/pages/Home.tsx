@@ -1,6 +1,8 @@
   // src/pages/Home.tsx
   // Updated: layout changed to left - center gauge - right (md+). Keeps all existing logic.
   import React, { useEffect, useMemo, useRef, useState } from "react";
+  // no new packages required
+  
 
   /* ---------------- Types ---------------- */
   type Gender = "Man/Boy" | "Woman/Girl" | "Non-binary" | "Prefer not to say" | "Other";
@@ -368,7 +370,7 @@
     const preloadTimer = useRef<number | null>(null);
     const typeTimer = useRef<number | null>(null);
 
-    const reportRef = useRef<HTMLPreElement | null>(null);
+    const reportRef = useRef<HTMLDivElement | null>(null);
     const footerRef = useRef<HTMLDivElement | null>(null);
 
     const [showTop, setShowTop] = useState(false);
@@ -376,6 +378,11 @@
     const [showWaitingBanner, setShowWaitingBanner] = useState(false);
 
     const [flowers, setFlowers] = useState<number[]>([]);
+
+    const [isFullReport, setIsFullReport] = useState(false); // for fullscreen overlay
+const [pendingScrollToGauge, setPendingScrollToGauge] = useState(false); // user clicked report, wait for done
+const reportContainerRef = useRef<HTMLDivElement | null>(null); // wrapper if needed
+
 
     useEffect(() => {
       if (phase !== "preload") return;
@@ -439,6 +446,7 @@
       return () => window.removeEventListener("scroll", onScroll);
     }, []);
 
+
     useEffect(() => {
       if (gauge > 50 && phase === "done") {
         setFlowers(Array.from({ length: 18 }, (_, i) => i));
@@ -447,12 +455,65 @@
       }
     }, [gauge, phase]);
 
+    // scroll back to gauge when report finishes streaming
+useEffect(() => {
+  if (phase === "done") {
+    setTimeout(() => {
+      const gaugeEl = document.querySelector(".center-column");
+      gaugeEl?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 400);
+  }
+}, [phase]);
+
+
+    // Convert raw streaming text into paragraphs for nicer display
+function formatReportText(raw: string) {
+  if (!raw) return [];
+  const normalized = raw.replace(/\r\n/g, "\n").replace(/\n\s+\n/g, "\n\n");
+  const parts = normalized.split(/\n{2,}/).filter(Boolean);
+  if (parts.length === 0) {
+    const s = normalized.split(/(?<=[.?!])\s+/).filter(Boolean);
+    const out: string[] = [];
+    for (let i = 0; i < s.length; i += 2) out.push(s.slice(i, i + 2).join(" "));
+    return out;
+  }
+  return parts;
+}
+
+// gentle emotion injection based on keywords
+function injectEmotions(raw: string) {
+  if (!raw) return raw;
+  const keywords = [
+    { rx: /\bsupport\b/i, phrase: "Aww — that sounds supportive." },
+    { rx: /\blove\b/i, phrase: "That's sweet." },
+    { rx: /\bcare\b/i, phrase: "Nice — caring vibes." },
+    { rx: /\bkind\b/i, phrase: "Lovely." },
+    { rx: /\bfun\b/i, phrase: "Fun — I like that." }
+  ];
+
+  return raw.replace(/([^.!?]+[.!?]+)/g, (m) => {
+    for (const k of keywords) if (k.rx.test(m)) {
+      if (Math.random() < 0.35) return m + " " + k.phrase + " ";
+    }
+    return m;
+  });
+}
+
+
     const onStart = async () => {
       setPhase("preload");
       setShowWaitingBanner(true);
       setIsReportComplete(false);
       setStreamText("");
       setFinalGauge(null);
+
+      // ensure report area is visible on start
+setTimeout(() => {
+  if (reportRef.current) {
+    reportRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+}, 250); // small delay to let DOM settle
+
 
       setGauge(0);
       setFakeGauge(0);
@@ -540,7 +601,10 @@
         
                 // Defensive guards for fields we expect
                 const compatibility = Number(data?.compatibility_percent ?? 50);
-                const narrative = String(data?.narrative ?? "");
+                let narrative = String(data?.narrative ?? "");
+                // lightly inject emotions (non-destructive)
+                narrative = injectEmotions(narrative);
+                
         
                 setMeterValue(compatibility);
                 setFinalGauge(compatibility);
@@ -834,24 +898,59 @@
 {/* This wrapper matches the exact layout of the scroll area */}
 <div className="relative w-full min-w-0">
 
-  {/* REPORT BOX */}
-  <pre
-    ref={reportRef}
-    className="report-box whitespace-pre-wrap text-sm leading-relaxed text-[var(--fg)] p-4 max-h-[500px] overflow-y-auto rounded-xl border border-[var(--border)] bg-[var(--bg)] shadow-inner w-full"
-    style={{
-      maxHeight: 320,
-      overflow: "auto",
-      paddingRight: "48px" // ensure text never touches the copy button
-    }}
+{/* REPORT BOX (formatted) */}
+<div
+  ref={reportRef}
+  className="report-box text-sm leading-relaxed text-[var(--fg)] p-4 max-h-[500px] overflow-y-auto rounded-xl border border-[var(--border)] bg-[var(--bg)] shadow-inner w-full space-y-4"
+  style={{
+    maxHeight: 320,
+    overflow: "auto",
+    paddingRight: "48px"
+  }}
+>
+  {/* Fullscreen icon (top-right) */}
+  <button
+    type="button"
+    className="btn-fullscreen"
+    aria-label="Open full report"
+    title="Open full report"
+    onClick={() => setIsFullReport(true)}
   >
-    {phase === "preload" && !streamText ? (
-      <blockquote className="italic text-center opacity-75">
-        {positiveQuotes[quoteIndex]}
-      </blockquote>
-    ) : (
-      streamText || "Namaskaram! Fill all required fields and press start."
-    )}
-  </pre>
+    {/* corner-to-corner outward arrow icon */}
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+    <path d="M8 3H5a2 2 0 0 0-2 2v3" />
+  <path d="M16 3h3a2 2 0 0 1 2 2v3" />
+  <path d="M8 21H5a2 2 0 0 1-2-2v-3" />
+  <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
+    </svg>
+  </button>
+
+  {/* existing content (quote or paragraphs) */}
+  {phase === "preload" && !streamText ? (
+    <blockquote className="italic text-center opacity-75">{positiveQuotes[quoteIndex]}</blockquote>
+  ) : (
+    formatReportText(streamText).map((p, i) => (
+      <p key={i} className="whitespace-pre-wrap">
+        {p}
+      </p>
+    ))
+  )}
+
+  {/* Keep the copy button you already have (bottom-right) — no change needed */}
+</div>
+
+
+<div className="flex items-center justify-between mt-3 gap-3">
+  {/* <button
+    type="button"
+    className="btn-view-full"
+    onClick={() => setIsFullReport(true)}
+    aria-label="View full report"
+  >
+    View Full
+  </button> */}
+
+
 
   {/* PERFECTLY ANCHORED COPY ICON */}
   <button
@@ -877,7 +976,7 @@
 >
   Download Report (.txt)
 </button>
-
+</div>
 </Card>
 
           </div>
@@ -901,6 +1000,23 @@
             </button>
           )}
         </main>
+        {/* Fullscreen report overlay */}
+{isFullReport && (
+  <div className="fullscreen-report" role="dialog" aria-modal="true" onClick={() => setIsFullReport(false)}>
+    <div className="panel" onClick={(e)=>e.stopPropagation()}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+        <h3 style={{ margin: 0 }}>Full Report</h3>
+        <button className="btn" onClick={() => setIsFullReport(false)}>Close</button>
+      </div>
+      <div style={{ maxHeight: "78vh", overflow: "auto" }}>
+        {formatReportText(streamText || "No report available").map((para, i) => (
+          <p key={i} style={{ marginBottom: 12, textAlign: "left" }}>{para}</p>
+        ))}
+      </div>
+    </div>
+  </div>
+)}
+
       </>
     );
   }

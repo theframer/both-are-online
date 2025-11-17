@@ -863,12 +863,9 @@ body, input, button, select { transition: background-color .25s, color .25s, bor
   }
   
   /* Contact link pill look */
-  .site-footer .footer-panel a {
-    text-decoration: underline;
-    color: var(--accent);
-    background: transparent;
-    border-radius: 999px;
-    padding: 6px 10px;
+  .site-footer .footer-panel .contact-btn:hover {
+    background: #1A3DA8;
+    color: white;
   }
   .site-footer .footer-panel a:hover { opacity: 0.92; }
   
@@ -882,26 +879,45 @@ body, input, button, select { transition: background-color .25s, color .25s, bor
 /* ===== Footer visual + alignment fixes ===== */
 .site-footer { position: relative; z-index: 3; margin-top: 2rem; padding-bottom: 1.5rem; }
 
-/* Footer Contact Form Button */
-.site-footer .footer-panel a {
+.site-footer .footer-panel .contact-btn {
   display: inline-block;
-  padding: 8px 18px;
-  border-radius: 999px; /* smooth pill */
+  padding: 7px 16px;
+  border-radius: 999px;
   border: 2px solid #1A3DA8; /* dark royal blue */
-  color: #1A3DA8; /* text */
+  color: #1A3DA8;
   background: transparent;
   text-decoration: none;
   font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
   transition: all 0.2s ease;
 }
 
-/* Hover state */
-.site-footer .footer-panel a:hover {
-  background: #1A3DA8; /* filled royal blue */
-  color: white;         /* white text */
-  border-color: #1A3DA8;
-  transform: translateY(-1px); /* subtle lift */
+/* Footer Contact Button (single canonical rule) */
+.site-footer .footer-panel .contact-btn {
+  display: inline-block;
+  padding: 7px 16px;
+  border-radius: 999px;
+  border: 2px solid #1A3DA8; /* dark royal blue */
+  color: #1A3DA8;
+  background: transparent;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.18s ease;
 }
+
+/* hover */
+.site-footer .footer-panel .contact-btn:hover {
+  background: #1A3DA8;
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+/* keep small/compact variant (if you re-use <a> elsewhere) */
+.site-footer .footer-panel a.contact-btn { text-decoration: none; }
+
 
 
 /* main footer panel - single card look */
@@ -1219,6 +1235,106 @@ input[type="time"] {
     white-space: normal !important;
     display: inline-block !important;
   }
+}
+
+/* ------- make place-of-birth suggestion items bigger on mobile ------- */
+.card .suggest .suggest-item {
+  padding: 12px 14px;        /* bigger tap target */
+  min-height: 44px;
+  font-size: 15px;
+}
+
+/* ensure selects are easy to tap */
+.card .select,
+.card input[type="date"],
+.card input[type="time"] {
+  min-height: 44px;         /* comfortable touch target */
+  padding-top: 0.7rem;
+  padding-bottom: 0.7rem;
+}
+
+/* report formatting improvements */
+.report-box {
+  font-size: 15px;
+  line-height: 1.6;
+  white-space: normal;      /* allow normal wrapping for paragraph layout */
+  font-family: ui-serif, Georgia, "Times New Roman", Times, serif; /* nicer reading */
+}
+
+/* fullscreen report overlay */
+.fullscreen-report {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  background: linear-gradient(180deg, rgba(0,0,0,0.96), rgba(0,0,0,0.98));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.fullscreen-report .panel {
+  width: 100%;
+  max-width: 960px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--panel);
+  border-radius: 12px;
+  padding: 20px;
+  box-sizing: border-box;
+  border: 1px solid var(--border);
+}
+
+/* view full button style */
+.btn-view-full {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid color-mix(in_oklab, var(--border) 40%, transparent);
+  color: var(--fg);
+  cursor: pointer;
+}
+
+/* small mobile tweak — checkbox + text wrapping handled earlier; keep consistent */
+@media (max-width: 640px) {
+  .report-box { font-size: 15px; line-height: 1.5; }
+}
+
+/* fullscreen icon button inside report box (top-right) */
+.report-box { position: relative; } /* ensure relative context */
+
+.btn-fullscreen {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+  cursor: pointer;
+  z-index: 30;
+  transition: transform .12s ease, background .12s ease;
+}
+
+.btn-fullscreen:hover { transform: translateY(-2px); background: color-mix(in_oklab, var(--panel) 90%, transparent); }
+
+.btn-fullscreen svg { width: 18px; height: 18px; display:block; }
+
+/* copy button we had before sits lower-right; ensure they don't clash */
+.copy-btn { right: 12px !important; bottom: 12px !important; left: auto !important; }
+
+/* small touch target increase for mobile */
+@media (max-width: 640px) {
+  .btn-fullscreen, .copy-btn { width: 40px; height: 40px; top: 10px; right: 10px; }
+  .copy-btn { bottom: 10px; }
 }
 
 
