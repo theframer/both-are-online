@@ -234,7 +234,7 @@
             <label>
   <span className="text-xs opacity-70">Date of Birth *</span>
   <input
-    className="input mt-1 w-full min-w-0"
+    className="input mt-1 w-full"
     type="date"
     required
     value={data.dob}
@@ -245,7 +245,7 @@
 <label>
   <span className="text-xs opacity-70">Time of Birth *</span>
   <input
-    className="input mt-1 w-full min-w-0"
+    className="input mt-1 w-full"
     type="time"
     required
     value={data.tob}
