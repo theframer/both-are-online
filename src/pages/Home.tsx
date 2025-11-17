@@ -752,6 +752,7 @@
               </div>
 
               <label
+  className="consent-inline-mobile"
   style={{
     display: "flex",
     flexDirection: "row",
@@ -788,18 +789,12 @@
     aria-label="Agree to terms"
   />
 
-  <span
-    style={{
-      display: "inline-flex",
-      alignItems: "center",
-      gap: "0.35rem",
-      whiteSpace: "nowrap",
-    }}
-  >
+  <span style={{ display: "inline-flex", alignItems: "center", gap: "0.35rem", whiteSpace: "nowrap" }}>
     <span>I accept the</span>
     <strong style={{ marginLeft: "0.125rem" }}>Terms &amp; Conditions</strong>
   </span>
 </label>
+
 
 
               <div className="pt-4 grid grid-cols-1 md:grid-cols-3 gap-3">

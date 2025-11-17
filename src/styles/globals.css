@@ -1186,6 +1186,40 @@ input[type="time"] {
   }
 }
 
+/* Mobile-specific consent row adjustments (scoped) */
+@media (max-width: 640px) {
+  .consent-inline-mobile {
+    /* allow wrapping on narrow screens and keep left alignment */
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    justify-content: flex-start !important;
+  }
+
+  /* force the checkbox to a small square on mobile UAs that try to enlarge it */
+  .consent-inline-mobile input[type="checkbox"] {
+    -webkit-appearance: checkbox !important;
+    appearance: checkbox !important;
+    width: 18px !important;
+    height: 18px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border-radius: 4px !important;
+    border: 1px solid rgba(255,255,255,0.08) !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    flex: 0 0 auto !important;
+    vertical-align: middle !important;
+    accent-color: var(--accent) !important;
+  }
+
+  /* let the label text wrap nicely beneath the checkbox on tight screens */
+  .consent-inline-mobile > span,
+  .consent-inline-mobile strong {
+    white-space: normal !important;
+    display: inline-block !important;
+  }
+}
 
 
 /* fallback tighter rule for older browsers */
