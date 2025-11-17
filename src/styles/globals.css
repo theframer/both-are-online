@@ -938,103 +938,49 @@ body, input, button, select { transition: background-color .25s, color .25s, bor
 }
 .footer-panel a:hover { opacity: 0.92; }
 
-/* ===========================
-   Repaired responsive fixes
-   (safe & scoped — replace previous emergency block)
-   =========================== */
-
-/* Basic box-sizing safety (safe, no !important) */
+/* --- GLOBAL SAFETY --- */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
 
-/* Prevent bokeh from creating layout overflow (main culprit) */
-.background {
-  position: fixed;
-  inset: 0;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden; /* visually clip */
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* On small viewports hide the background (cheap, safe) */
-@media (max-width: 640px) {
-  .background { display: none; }
-}
-
-/* Ensure flex/grid children inside the main grid can shrink properly.
-   NOTE: scoped to only the likely layout containers, not global label/input. */
-.card,
-.report-box,
-.footer-panel,
-#compat-grid > div,
-.center-column,
-.gauge-sticky-wrapper {
-  min-width: 0;
-  max-width: 100%;
-  box-sizing: border-box;
-}
-
-/* Make form controls inside .card behave - scoped so desktop layout isn't changed */
-.card .input,
-.card .select,
-.card textarea,
-.card select,
-.card input {
-  min-width: 0;
-  width: 100%;
-  box-sizing: border-box;
-  overflow-wrap: anywhere;
-}
-
-/* Scope date/time fixes to card inputs only (prevents native chrome from stretching) */
-.card input[type="date"],
-.card input[type="time"],
-.card input[type="datetime-local"] {
-  -webkit-appearance: textfield;
-  appearance: textfield;
-  padding-right: 0.9rem;
-}
-
-/* Hide the inner picker controls in WebKit for these card inputs only */
-.card input[type="date"]::-webkit-calendar-picker-indicator,
-.card input[type="date"]::-webkit-clear-button,
-.card input[type="date"]::-webkit-inner-spin-button,
-.card input[type="time"]::-webkit-clear-button,
-.card input[type="time"]::-webkit-inner-spin-button {
-  display: none;
-  -webkit-appearance: none;
-  appearance: none;
-  margin: 0;
-  padding: 0;
-}
-
-/* If any absolute element from the background extends outside, keep it visually clipped */
-.background span,
-*[class*="absolute"] {
-  max-width: 100vw;
-  box-sizing: border-box;
-}
-
-/* Keep the main layout container from producing horizontal scroll —
-   this is intentionally conservative (no !important). */
-#compat-grid,
-.max-w-7xl {
+/* ensure root can't scroll horizontally (already set but keep as safeguard) */
+html, body {
   overflow-x: hidden;
 }
 
-/* Mobile padding tweaks — small, modest padding only */
-@media (max-width: 767px) {
-  main, .max-w-7xl, #compat-grid {
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
-  }
+/* Force flex/grid children to be allowed to shrink */
+.card,
+#compat-grid > div,
+.card > .flex-1,
+.report-box,
+.footer-panel {
+  min-width: 0; /* important for flex children to shrink properly */
+  width: 100%;
+  box-sizing: border-box;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
 }
 
+/* Make the compatibility grid adaptive instead of fixed 360px column */
+#compat-grid {
+  display: grid !important;
+  gap: 1.5rem !important;
+  /* center column will grow up to 360px but may shrink below that */
+  grid-template-columns: 1fr minmax(260px, 360px) 1fr;
+  align-items: stretch;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* Mobile: single column and safe inner padding */
+@media (max-width: 767px) {
+  #compat-grid {
+    grid-template-columns: 1fr !important;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
 
   /* reduce large internal paddings that can push width */
   .card, .report-box, .footer-panel {
@@ -1068,7 +1014,7 @@ body, input, button, select { transition: background-color .25s, color .25s, bor
     white-space: normal;
     word-break: break-word;
   }
-
+}
 
 /* Extra: debug helper you can enable while testing (remove later)
 *:focus { outline: 1px dashed rgba(0,0,0,0.06); } */
@@ -1145,39 +1091,6 @@ input[type="time"] {
   appearance: textfield;
   padding-right: 2.6rem; /* reserve room for the native icon without changing overall width */
 }
-
-/* --- Consent label: force proper inline-flex layout and prevent wrapping --- */
-.consent-inline {
-  display: flex !important;
-  align-items: center !important;
-  gap: 0.5rem !important;
-  justify-content: flex-start !important;
-  text-align: left !important;
-  white-space: normal;          /* allow wrapping if needed but keep compact */
-  flex-wrap: nowrap;           /* normally keep it on one line; allow wrapping on extreme narrow if needed */
-  width: 100%;                 /* take full width of parent so it aligns with inputs */
-  box-sizing: border-box;
-}
-
-/* Keep the checkbox small and aligned */
-.consent-inline input[type="checkbox"] {
-  width: auto;
-  height: auto;
-  margin: 0;
-  flex: 0 0 auto;
-}
-
-/* Ensure the bold text remains inline and doesn't become a block due to other rules */
-.consent-inline strong {
-  display: inline-block;
-  font-weight: 700;
-  margin-left: 0.125rem;
-  white-space: nowrap;  /* keep the "Terms & Conditions" phrase together */
-}
-
-/* Safety: if some previous global rule set 'label' to block or changed text-align,
-   this scoped rule ensures the consent label remains left-aligned and horizontal. */
-
 
 /* fallback tighter rule for older browsers */
 @supports not (appearance: textfield) {

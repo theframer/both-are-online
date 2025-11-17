@@ -751,19 +751,15 @@
                 </div>
               </div>
 
-              <label className="consent-inline mt-2 flex items-center gap-2 text-sm">
-  <input
-    type="checkbox"
-    checked={agree}
-    onChange={e => setAgree(e.target.checked)}
-    className="accent-[var(--accent)]"
-  />
-  <span style={{ display: "inline-flex", alignItems: "center", gap: "0.35rem" }}>
-    <span>I accept the</span>
-    <strong style={{ display: "inline-block", marginLeft: "0.125rem" }}>Terms &amp; Conditions</strong>
-  </span>
-</label>
-
+              <label className="mt-2 flex items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  checked={agree}
+                  onChange={e=>setAgree(e.target.checked)}
+                  className="accent-[var(--accent)]"
+                />
+                I accept the<strong>Terms & Conditions</strong>
+              </label>
 
               <div className="pt-4 grid grid-cols-1 md:grid-cols-3 gap-3">
                 <button
