@@ -1,0 +1,74 @@
+.popup-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    backdrop-filter: blur(8px);
+    background: rgba(0,0,0,0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+  
+  .popup-card {
+    background: rgba(255, 255, 255, 0.712);
+    backdrop-filter: blur(12px);
+    border-radius: 20px;
+    padding: 30px;
+    width: 90%;
+    max-width: 500px;
+    color: #8d1111;
+    text-align: center;
+  }
+  
+  .popup-card input,
+  .popup-card select,
+  .popup-card textarea {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 10px;
+    border: none;
+    background: rgba(255, 255, 255, 0.5);
+    font-size: 1em;
+  }
+  
+  .submit-btn {
+    padding: 15px 30px;
+    background: #8d1111;
+    color: #ffffff;
+    border-radius: 30px;
+    font-size: 1.2em;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  
+  .submit-btn:hover {
+    background: #ffffff;
+    color: #6c0f0f;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+  }
+  
+  .close-btn {
+    background: transparent;
+    border: none;
+    font-size: 2em;
+    color: #ffffff;
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    cursor: pointer;
+  }
+
+  .close-btn:hover {
+    color: #6c0f0f;
+    transform: translateY(-2px);
+  }
+
+  .success-message h2,
+.success-message p {
+  color: white;
+}
