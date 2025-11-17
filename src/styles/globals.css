@@ -8,10 +8,10 @@
   --fg: #0f0f0f;
   --panel: #f6f4f2;
   --border: #e9e5e1;
-  --accent: #C65F5F;      /* CTA, gauge, soda */
-  --pink: #ff4b91;       /* "Both" in logo */
-  --blur: 6px;        /* navbar blur */
-  --blue: #3b82f6;        /* added for card-boy */
+  --accent: #C65F5F;        /* CTA, gauge, soda */
+  --pink: #ff4b91;          /* "Both" in logo */
+  --blur: 6px;              /* navbar blur */
+  --blue: #3b82f6;          /* added for card-boy */
 }
 :root.dark {
   --bg: #0f0f0f;
@@ -20,7 +20,7 @@
   --border: #3a3a3a;
   --accent: #C65F5F;
   --pink: #ff4b91;
-  --blue: #5b9bf9;       /* lightened blue for dark mode */
+  --blue: #5b9bf9;          /* lightened blue for dark mode */
 }
 
 /* ===== ANIMATED BOKEH BACKGROUND ===== */
@@ -293,6 +293,8 @@ html, body {
   font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Inter, "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  /* Add this to prevent any root-level overflow */
+  overflow-x: hidden; 
 }
 
 /* ===== GLASS NAV (full width) ===== */
@@ -446,7 +448,7 @@ pre {
 
 /* Extra padding inside cards so their rounded corners don't touch adjacent elements */
 .card {
-  padding-top: 1rem;   /* slightly larger than before */
+  padding-top: 1rem;    /* slightly larger than before */
   padding-bottom: 1rem;
 }
 
@@ -674,7 +676,10 @@ footer .text-xs.opacity-70 { margin-top: 6px; }
 .animate-fadeInOut {
   animation: fadeInOut 1.6s ease forwards;
 }
-
+img, video, svg {
+  max-width: 100%;
+  height: auto; /* Maintains aspect ratio */
+}
 
 /* Terms tooltip */
 .terms-link { position: relative; cursor: pointer; color: inherit; text-decoration: underline; }
@@ -722,22 +727,23 @@ label .terms-link:hover + .terms-tooltip { display:block; }
    Forces left-card | gauge | right-card layout
    ========================= */
 
-   #compat-grid {
+    #compat-grid {
     /* Keep your existing grid properties */
     display: grid !important;
     gap: 1.5rem !important;
     grid-template-columns: 1fr 360px 1fr;
     align-items: stretch;
     
-    /* --- ADD THIS PADDING --- */
-    padding-left: 50px; /* Space for the left card's shadow to spread */
-    padding-right: 50px; /* Space for the right card's shadow to spread */
+    /* FIX: Remove fixed padding here. Tailwind's outer container should handle it. */
   }
 
 /* small screens: use single column */
 @media (max-width: 767px) {
   #compat-grid {
     grid-template-columns: 1fr !important;
+    /* FIX: Add a small, relative padding for mobile devices */
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 
   #compat-grid .center-column {
@@ -789,11 +795,11 @@ html, body {
 body, input, button, select { transition: background-color .25s, color .25s, border-color .25s; }
 
 /* =========================
-   Footer — centered inner content + visual card
-   Replace any existing .site-footer / .footer-panel / .footer-inner rules with this block
-   ========================= */
+    Footer — centered inner content + visual card
+    Replace any existing .site-footer / .footer-panel / .footer-inner rules with this block
+    ========================= */
 
-   .site-footer {
+    .site-footer {
     box-sizing: border-box;
     position: relative;
     z-index: 3;
@@ -807,21 +813,21 @@ body, input, button, select { transition: background-color .25s, color .25s, bor
     box-sizing: border-box;
     background: var(--panel);
     border: 1px solid var(--border);
-    border-radius: 1rem;      /* match .card radius */
-    padding: 1.1rem;         /* match .card padding */
+    border-radius: 1rem;        /* match .card radius */
+    padding: 1.1rem;            /* match .card padding */
     box-shadow: 0 1px 2px rgba(0,0,0,0.06);
     overflow: hidden;
     /* keep panel horizontally centered via the wrapper class on the element (max-w-7xl mx-auto) */
   }
   
   /* THIS is the important centering change:
-     constrain the inner grid and center it so left/right columns sit visually centered
+      constrain the inner grid and center it so left/right columns sit visually centered
   */
   .site-footer .footer-inner {
     display: grid;
     gap: 0.5rem;
-    max-width: 1100px;     /* center the content inside the footer card */
-    margin: 0 auto;        /* centers the inner grid horizontally */
+    max-width: 1100px;      /* center the content inside the footer card */
+    margin: 0 auto;         /* centers the inner grid horizontally */
     align-items: start;
     grid-template-columns: 1fr 360px; /* left content / right contact block */
   }
@@ -892,7 +898,7 @@ body, input, button, select { transition: background-color .25s, color .25s, bor
 /* Hover state */
 .site-footer .footer-panel a:hover {
   background: #1A3DA8; /* filled royal blue */
-  color: white;        /* white text */
+  color: white;         /* white text */
   border-color: #1A3DA8;
   transform: translateY(-1px); /* subtle lift */
 }
@@ -943,7 +949,6 @@ body, input, button, select { transition: background-color .25s, color .25s, bor
 
 /* keep main content above nav and footer visible */
 main { position: relative; z-index: 2; }
-
 
 /* final touch: ensure centered page container for other major elements */
 .max-w-7xl { max-width: 1280px; margin-left: auto; margin-right: auto; }
