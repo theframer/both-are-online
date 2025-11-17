@@ -231,10 +231,10 @@
               </select>
             </label>
 
-            <label>
+            <label className="block min-w-0">
   <span className="text-xs opacity-70">Date of Birth *</span>
   <input
-    className="input mt-1 w-full"
+    className="input mt-1 w-full min-w-0"
     type="date"
     required
     value={data.dob}
@@ -242,10 +242,10 @@
   />
 </label>
 
-<label>
+<label className="block min-w-0">
   <span className="text-xs opacity-70">Time of Birth *</span>
   <input
-    className="input mt-1 w-full"
+    className="input mt-1 w-full min-w-0"
     type="time"
     required
     value={data.tob}

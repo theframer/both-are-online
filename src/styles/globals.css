@@ -1050,6 +1050,52 @@ input[type="datetime-local"] {
   min-width: 0;
 }
 
+.grid > label,
+.grid > div,
+label {
+  /* ensure grid children can shrink and be full-width */
+  display: block;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+/* make all .input/select consistent and prevent them forcing width */
+.input,
+.select,
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"] {
+  min-width: 0 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 0.65rem 0.9rem !important; /* match text inputs */
+  line-height: 1.2;
+  display: block;
+}
+
+/* reduce native chrome inner controls that change intrinsic width */
+input[type="date"]::-webkit-clear-button,
+input[type="date"]::-webkit-inner-spin-button,
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-clear-button,
+input[type="time"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* keep the native icon but reserve space so it doesn't push width */
+input[type="date"],
+input[type="time"] {
+  -webkit-appearance: textfield; /* normalizes cross-browser */
+  appearance: textfield;
+  padding-right: 2.6rem; /* reserve room for the native icon without changing overall width */
+}
+
+/* fallback tighter rule for older browsers */
+@supports not (appearance: textfield) {
+  input[type="date"], input[type="time"] { padding-right: 2.2rem; }
+}
 
 /* responsive adjustments */
 @media (max-width: 767px) {
