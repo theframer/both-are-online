@@ -1089,12 +1089,12 @@ input[type="date"],
 input[type="time"] {
   -webkit-appearance: textfield; /* normalizes cross-browser */
   appearance: textfield;
-  padding-right: 2.6rem; /* reserve room for the native icon without changing overall width */
+  padding-right: 0.6rem; /* reserve room for the native icon without changing overall width */
 }
 
 /* fallback tighter rule for older browsers */
 @supports not (appearance: textfield) {
-  input[type="date"], input[type="time"] { padding-right: 1.2rem; }
+  input[type="date"], input[type="time"] { padding-right: 2.2rem; }
 }
 
 /* responsive adjustments */
