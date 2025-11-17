@@ -230,16 +230,22 @@ async function callGeminiWithRetry(apiKey, promptText) {
 
 // ---------------- API ROUTE ----------------
 
+// ---------------- API ROUTE ----------------
+
 app.post("/api/report", async (req, res) => {
   try {
     const body = req.body || {};
 
     if (!GEMINI_KEY) {
       // Missing key is a server config error — return a clear message
-      throw new Error("Server configuration error: GEMINI_API_KEY not set.");
+      // This MUST be the first check.
+      return res.status(500).json({
+         compatibility_percent: 50,
+         narrative: "SERVER CONFIGURATION ERROR: GEMINI_API_KEY not set. Check Render Environment variables.",
+      });
     }
 
-    // Validate minimal payload shape (keep permissive but helpful)
+    // Validate minimal payload shape
     if (!body.partner1 || !body.partner2 || !body.relationship_start) {
       return res.status(400).json({
         compatibility_percent: 50,
@@ -250,20 +256,32 @@ app.post("/api/report", async (req, res) => {
     const scoreValue = score(body.partner1, body.partner2, body.relationship_start);
     const prompt = buildTemplate(body);
 
-    // Call Gemini with retries
-    const text = await callGeminiWithRetry(GEMINI_KEY, prompt);
+    // Call Gemini with retries. This is the part that might timeout.
+    let text = "";
+    try {
+        text = await callGeminiWithRetry(GEMINI_KEY, prompt);
+    } catch (aiError) {
+        console.error("AI Generation Failed:", aiError);
+        // If AI call fails, return a safe, descriptive JSON response instead of crashing.
+        return res.status(504).json({ // 504 Gateway Timeout is often appropriate here
+            compatibility_percent: scoreValue, 
+            narrative: `AI REPORT FAILED (504 Timeout/Error). Status: ${aiError.message || "Unknown AI error occurred."}`,
+        });
+    }
 
+
+    // If the AI call succeeds, return the result
     return res.json({
       compatibility_percent: scoreValue,
       narrative: text,
     });
   } catch (err) {
-    console.error("API Report Error:", err && err.message ? err.message : err);
+    console.error("API Report UNHANDLED Error:", err && err.message ? err.message : err);
 
-    // If CORS blocked or other, still respond with JSON so client can parse gracefully
+    // This is the safety net for any crash outside the AI block
     return res.status(500).json({
       compatibility_percent: 50,
-      narrative: `SERVER ERROR: Failed to generate report. ${String(err && err.message ? err.message : err)}`,
+      narrative: `SERVER FATAL ERROR (500): Failed to process request. ${String(err && err.message ? err.message : err)}`,
     });
   }
 });
