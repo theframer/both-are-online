@@ -723,9 +723,9 @@ label .terms-link:hover + .terms-tooltip { display:block; }
 @keyframes sparkle-blink { 0% { opacity: 0.72; } 50% { opacity: 1; } 100% { opacity: 0.72; } }
 
 /* =========================
-   Compatibility grid overrides
-   Forces left-card | gauge | right-card layout
-   ========================= */
+    Compatibility grid overrides
+    Forces left-card | gauge | right-card layout
+    ========================= */
 
     #compat-grid {
     /* Keep your existing grid properties */
@@ -826,7 +826,7 @@ body, input, button, select { transition: background-color .25s, color .25s, bor
   .site-footer .footer-inner {
     display: grid;
     gap: 0.5rem;
-    max-width: 1100px;      /* center the content inside the footer card */
+    max-width: 1100px;        /* center the content inside the footer card */
     margin: 0 auto;         /* centers the inner grid horizontally */
     align-items: start;
     grid-template-columns: 1fr 360px; /* left content / right contact block */
