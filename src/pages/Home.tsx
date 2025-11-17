@@ -606,7 +606,7 @@ frame = requestAnimationFrame(step);
     {/* Left partner card */}
     <div className="order-1 md:order-1">
       <PartnerForm
-        title={`— ${personA.gender?.includes("Man") ? "You" : personA.gender?.includes("Woman") ? "Girl" : ""}`}
+        title={`You ${personA.gender?.includes("Man") ? "You" : personA.gender?.includes("Woman") ? "Girl" : ""}`}
         data={personA}
         setData={setPersonA}
       />
@@ -642,7 +642,7 @@ frame = requestAnimationFrame(step);
     {/* Right partner card */}
     <div className="order-3 md:order-3">
       <PartnerForm
-        title={`— ${personB.gender?.includes("Woman") ? "Your Partner" : personB.gender?.includes("Man") ? "Boy" : ""}`}
+        title={`Your Partner ${personB.gender?.includes("Woman") ? "Your Partner" : personB.gender?.includes("Man") ? "Boy" : ""}`}
         data={personB}
         setData={setPersonB}
       />
