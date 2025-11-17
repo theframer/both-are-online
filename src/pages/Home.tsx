@@ -228,13 +228,13 @@
 
             <label>
               <span className="text-xs opacity-70">Date of Birth *</span>
-              <input className="input mt-1 w-full" type="date" required value={data.dob}
+              <input className="input mt-1 w-full max-w-full box-border" type="date" required value={data.dob}
                 onChange={e=>{ const v = e.target.value; setData({...data,dob:v}); }}/>
             </label>
 
             <label>
               <span className="text-xs opacity-70">Time of Birth *</span>
-              <input className="input mt-1 w-full" type="time" required value={data.tob}
+              <input className="input mt-1 w-full max-w-full box-border" type="time" required value={data.tob}
                 onChange={e=>setData({...data,tob:e.target.value})}/>
             </label>
 
@@ -710,7 +710,7 @@
                     type="date"
                     value={relationshipStart}
                     onChange={e=>setRelationshipStart(e.target.value)}
-                    className="input w-full"
+                    className="input w-full max-w-full box-border"
                     required
                   />
                 </div>
