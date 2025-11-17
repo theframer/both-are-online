@@ -705,7 +705,7 @@
             <Card title="Relationship & Consent">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
                 <div>
-                  <label className="block text-sm mb-1 opacity-80">Relationship Start *</label>
+                  <label className="block text-sm mb-1 opacity-80">Relationship Start Date*</label>
                   <input
                     type="date"
                     value={relationshipStart}
@@ -767,7 +767,7 @@
             <div className="h-6" />
 
             {/* Report Box */}
-            <Card title="Real-time Generated Report">
+            <Card title="Real-time Report" className="h-full w-full">
 
 {/* This wrapper matches the exact layout of the scroll area */}
 <div className="relative">
@@ -775,7 +775,7 @@
   {/* REPORT BOX */}
   <pre
     ref={reportRef}
-    className="report-box whitespace-pre-wrap text-sm leading-6 no-jump"
+    className="report-box whitespace-pre-wrap text-sm leading-relaxed text-[var(--fg)] p-4 max-h-[500px] overflow-y-auto rounded-xl border border-[var(--border)] bg-[var(--bg)] shadow-inner w-full"
     style={{
       maxHeight: 320,
       overflow: "auto",
