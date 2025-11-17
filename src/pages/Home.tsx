@@ -463,73 +463,123 @@
           relationship_start: new Date(relationshipStart).toISOString(),
         };
 
-        const res = await fetch("/api/report",{
-          method:"POST",
-          headers:{"Content-Type":"application/json"},
-          body: JSON.stringify(body)
-        });
-
-        const data = await res.json();
-
-        if (preloadTimer.current !== null) { window.clearInterval(preloadTimer.current); preloadTimer.current = null; }
-        setPhase("streaming");
-        setOscillate(false);
-        window.clearInterval(suspenseInterval);
-
-        setMeterValue(data.compatibility_percent);
-        setFinalGauge(Number(data.compatibility_percent));
-        setShowWaitingBanner(false);
-        setIsReportComplete(true);
-
-        // Smooth final gauge animation (REAL AI RESULT)
-const finalValue = Number(data.compatibility_percent);
-
-let frame: number;
-const duration = 1000;
-const start = performance.now();
-const from = meterValue;   // ← whatever the gauge shows right now
-const delta = finalValue - from;
-
-// easeOutCubic
-const ease = (t: number) => 1 - Math.pow(1 - t, 3);
-
-function step(now: number) {
-  const t = Math.min(1, (now - start) / duration);
-  const eased = ease(t);
-  setMeterValue(Math.round(from + delta * eased));
-
-  if (t < 1) frame = requestAnimationFrame(step);
-}
-frame = requestAnimationFrame(step);
-
-
-        if (typeTimer.current !== null) { window.clearInterval(typeTimer.current); typeTimer.current = null; }
-        let i=0;
-        const chunk = 4;
-        const delay = 18;
-        typeTimer.current = window.setInterval(()=>{
-          i += chunk;
-          setStreamText(prev=>{
-            const next = data.narrative.slice(0, Math.min(i, data.narrative.length));
-            const match = next.match(/(\d{2,3})\s*\%/g);
-            if (match) {
-              const percentString = match[match.length - 1].replace(/[^0-9]/g, "");
-              const percent = parseInt(percentString, 10);
-              if(percent >= 0 && percent <= 100) setStreamedGauge(percent);
-            }
-            requestAnimationFrame(()=>{
-              if (reportRef.current) {
-                reportRef.current.scrollTop = reportRef.current.scrollHeight;
-              }
-            });
-            return next;
-          });
-          if (i >= data.narrative.length && typeTimer.current !== null) {
-            window.clearInterval(typeTimer.current);
-            typeTimer.current = null;
-            setPhase("done");
-          }
-        }, delay);
+                // ---- Robust fetch + parsing (replace the old fetch block) ----
+                const API_BASE = (import.meta.env.VITE_API_BASE || "").replace(/\/$/, ""); // ensure no trailing slash
+                const endpoint = (API_BASE || "") + "/api/report";
+        
+                // Do the POST
+                const res = await fetch(endpoint, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(body),
+                });
+        
+                // Read raw text first (safe even if empty or HTML)
+                const raw = await res.text();
+        
+                if (!raw || raw.trim().length === 0) {
+                  // Empty response — handle gracefully
+                  console.error("Empty response from API", { status: res.status, statusText: res.statusText });
+                  if (preloadTimer.current !== null) { window.clearInterval(preloadTimer.current); preloadTimer.current = null; }
+                  setPhase("done");
+                  setFinalGauge(50);
+                  setStreamText(`ERROR: Empty response from server (status ${res.status})`);
+                  setShowWaitingBanner(false);
+                  setIsReportComplete(true);
+                  return;
+                }
+        
+                // Try to parse JSON if content-type says JSON, otherwise show raw text
+                const contentType = res.headers.get("content-type") || "";
+                let data: any = null;
+                if (contentType.includes("application/json")) {
+                  try {
+                    data = JSON.parse(raw);
+                  } catch (parseErr) {
+                    console.error("JSON parse error:", parseErr, "raw:", raw);
+                    if (preloadTimer.current !== null) { window.clearInterval(preloadTimer.current); preloadTimer.current = null; }
+                    setPhase("done");
+                    setFinalGauge(50);
+                    setStreamText(`ERROR: Failed to parse JSON response:\n\n${raw}`);
+                    setShowWaitingBanner(false);
+                    setIsReportComplete(true);
+                    return;
+                  }
+                } else {
+                  // Not JSON: likely an HTML error page or plain text
+                  console.warn("Non-JSON response from API", { status: res.status, raw });
+                  if (preloadTimer.current !== null) { window.clearInterval(preloadTimer.current); preloadTimer.current = null; }
+                  setPhase("done");
+                  setFinalGauge(50);
+                  setStreamText(`Server returned non-JSON response (status ${res.status}):\n\n${raw}`);
+                  setShowWaitingBanner(false);
+                  setIsReportComplete(true);
+                  return;
+                }
+        
+                // --- If we reached here, `data` is the parsed JSON object ---
+                if (preloadTimer.current !== null) { window.clearInterval(preloadTimer.current); preloadTimer.current = null; }
+                setPhase("streaming");
+                setOscillate(false);
+                window.clearInterval(suspenseInterval);
+        
+                // Defensive guards for fields we expect
+                const compatibility = Number(data?.compatibility_percent ?? 50);
+                const narrative = String(data?.narrative ?? "");
+        
+                setMeterValue(compatibility);
+                setFinalGauge(compatibility);
+                setShowWaitingBanner(false);
+                setIsReportComplete(true);
+        
+                // Smooth gauge animation to final value (keeps your current approach)
+                {
+                  const finalValue = compatibility;
+                  let frame: number;
+                  const duration = 1000;
+                  const start = performance.now();
+                  const from = meterValue;
+                  const delta = finalValue - from;
+                  const ease = (t: number) => 1 - Math.pow(1 - t, 3);
+                  function step(now: number) {
+                    const t = Math.min(1, (now - start) / duration);
+                    const eased = ease(t);
+                    setMeterValue(Math.round(from + delta * eased));
+                    if (t < 1) frame = requestAnimationFrame(step);
+                  }
+                  frame = requestAnimationFrame(step);
+                }
+        
+                // typewriter streaming of narrative (same logic as before)
+                if (typeTimer.current !== null) { window.clearInterval(typeTimer.current); typeTimer.current = null; }
+                let i = 0;
+                const chunk = 4;
+                const delay = 18;
+                typeTimer.current = window.setInterval(() => {
+                  i += chunk;
+                  setStreamText(prev => {
+                    const next = narrative.slice(0, Math.min(i, narrative.length));
+                    const match = next.match(/(\d{2,3})\s*\%/g);
+                    if (match) {
+                      const percentString = match[match.length - 1].replace(/[^0-9]/g, "");
+                      const percent = parseInt(percentString, 10);
+                      if (percent >= 0 && percent <= 100) setStreamedGauge(percent);
+                    }
+                    requestAnimationFrame(() => {
+                      if (reportRef.current) {
+                        reportRef.current.scrollTop = reportRef.current.scrollHeight;
+                      }
+                    });
+                    return next;
+                  });
+                  if (i >= narrative.length && typeTimer.current !== null) {
+                    window.clearInterval(typeTimer.current);
+                    typeTimer.current = null;
+                    setPhase("done");
+                  }
+                }, delay);
+                // ---- end robust fetch block ----
+        
 
       } catch (e) {
         if (preloadTimer.current !== null) { window.clearInterval(preloadTimer.current); preloadTimer.current = null; }
