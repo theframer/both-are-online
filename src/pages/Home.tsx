@@ -76,7 +76,9 @@
     return (
       <section className={`card bg-[var(--panel)] border border-[var(--border)] rounded-2xl p-4 my-4 flex flex-col h-full ${className}`}>
         <div className="mb-3">
-          <h2 className="text-base md:text-lg font-semibold">{title}</h2>
+        <h2 className="text-base md:text-lg font-semibold mb-3">
+  {(title && String(title).trim()) ? title : "Partner"}
+</h2>
         </div>
 
         {/* content area grows and scrolls when necessary */}
@@ -151,11 +153,11 @@
 
   /* ---------------- Partner Form ---------------- */
   function PartnerForm({
-    data, setData, title,
+    data, setData, title = "Partner",
   }: {
     data: Partner;
     setData: (p: Partner) => void;
-    title: string;
+    title?: string;
   }) {
     const [suggest, setSuggest] = useState<string[]>([]);
     const [showSuggest, setShowSuggest] = useState(false);
