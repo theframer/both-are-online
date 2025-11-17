@@ -232,16 +232,26 @@
             </label>
 
             <label>
-              <span className="text-xs opacity-70">Date of Birth *</span>
-              <input className="input mt-1 w-full max-w-full box-border" type="date" required value={data.dob}
-                onChange={e=>{ const v = e.target.value; setData({...data,dob:v}); }}/>
-            </label>
+  <span className="text-xs opacity-70">Date of Birth *</span>
+  <input
+    className="input mt-1 w-full min-w-0"
+    type="date"
+    required
+    value={data.dob}
+    onChange={e => { const v = e.target.value; setData({ ...data, dob: v }); }}
+  />
+</label>
 
-            <label>
-              <span className="text-xs opacity-70">Time of Birth *</span>
-              <input className="input mt-1 w-full max-w-full box-border" type="time" required value={data.tob}
-                onChange={e=>setData({...data,tob:e.target.value})}/>
-            </label>
+<label>
+  <span className="text-xs opacity-70">Time of Birth *</span>
+  <input
+    className="input mt-1 w-full min-w-0"
+    type="time"
+    required
+    value={data.tob}
+    onChange={e => setData({ ...data, tob: e.target.value })}
+  />
+</label>
 
             <label className="relative">
               <span className="text-xs opacity-70">Place of Birth *</span>

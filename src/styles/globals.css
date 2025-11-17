@@ -1019,6 +1019,31 @@ html, body {
 /* Extra: debug helper you can enable while testing (remove later)
 *:focus { outline: 1px dashed rgba(0,0,0,0.06); } */
 
+/* ensure inputs never force parent width and have consistent box sizing */
+.input,
+.select,
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"] {
+  min-width: 0;
+  box-sizing: border-box;  /* safe guard */
+  padding: 0.65rem 0.9rem; /* same padding for date/time controls */
+  height: auto;            /* let content define height consistently */
+  line-height: 1.2;
+}
+
+/* normalize appearance so different browsers behave similarly (keeps native icon) */
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"] {
+  -webkit-appearance: textfield;
+  appearance: textfield;
+}
+:root.dark input[type="date"],
+:root.dark input[type="time"] {
+  color-scheme: dark;
+}
+
 
 /* responsive adjustments */
 @media (max-width: 767px) {
