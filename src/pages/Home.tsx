@@ -74,19 +74,24 @@
   /* ---------------- UI Helpers ---------------- */
   function Card({ children, title, className = "" }: { children: React.ReactNode; title: string; className?: string }) {
     return (
-      <section className={`card bg-[var(--panel)] border border-[var(--border)] rounded-2xl p-4 my-4 flex flex-col h-full ${className}`}>
+      <section
+        className={`card min-w-0 bg-[var(--panel)] border border-[var(--border)] rounded-2xl p-4 my-4 flex flex-col h-full ${className}`}
+        style={{ boxSizing: "border-box" }}
+      >
         <div className="mb-3">
-        <h2 className="text-base md:text-lg font-semibold mb-3">
-  {(title && String(title).trim()) ? title : "Partner"}
-</h2>
+          <h2 className="text-base md:text-lg font-semibold mb-3">
+            {(title && String(title).trim()) ? title : "Partner"}
+          </h2>
         </div>
-
+  
         {/* content area grows and scrolls when necessary */}
-        <div className="flex-1" style={{ overflow: "visible" }}>          {children}
+        <div className="flex-1 min-w-0" style={{ overflow: "auto" }}>
+          {children}
         </div>
       </section>
     );
   }
+  
 
   function Pill({ label, onRemove }: { label: string; onRemove: () => void }) {
     return (
@@ -665,28 +670,39 @@
     {/* Center gauge — placed as the middle DOM child to guarantee it's centered */}
     <div className="order-2 md:order-2 flex items-start md:items-center justify-center center-column">
       {/* sticky wrapper keeps gauge visible while you scroll the left/right cards */}
-      <div className="gauge-sticky-wrapper" style={{ width: 360, height: 360 }}>
-        <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <svg width={320} height={320} className="-rotate-90" style={{ zIndex: 10 }}>
-            <circle cx={160} cy={160} r={150} stroke="var(--border)" strokeWidth={12} fill="none" />
-            <circle
-              cx={160}
-              cy={160}
-              r={150}
-              stroke="var(--accent)"
-              strokeWidth={12}
-              fill="none"
-              strokeLinecap="round"
-              strokeDasharray={`${(meterValue / 100) * (2 * Math.PI * 150)} ${2 * Math.PI * 150}`}
-            />
-          </svg>
+      {/* responsive center gauge wrapper */}
+<div
+  className="gauge-sticky-wrapper w-full max-w-[360px]"
+  style={{
+    // Use aspect-ratio where supported, fallback will preserve square via padding trick in older browsers
+    aspectRatio: "1 / 1",
+    position: "relative",
+    margin: "0 auto",
+  }}
+>
+  {/* inner container ensures svg fills the box */}
+  <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+    {/* svg scales to the container via viewBox */}
+    <svg viewBox="0 0 320 320" preserveAspectRatio="xMidYMid meet" className="-rotate-90 w-full h-full" style={{ zIndex: 10 }}>
+      <circle cx={160} cy={160} r={150} stroke="var(--border)" strokeWidth={12} fill="none" />
+      <circle
+        cx={160}
+        cy={160}
+        r={150}
+        stroke="var(--accent)"
+        strokeWidth={12}
+        fill="none"
+        strokeLinecap="round"
+        strokeDasharray={`${(meterValue / 100) * (2 * Math.PI * 150)} ${2 * Math.PI * 150}`}
+      />
+    </svg>
 
-          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-            <div className="text-5xl font-semibold">{meterValue}%</div>
-            <div className="text-sm opacity-70 mt-1">{phase === "preload" ? "Analyzing..." : "Compatibility"}</div>
-          </div>
-        </div>
-      </div>
+    <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+      <div className="text-5xl font-semibold">{meterValue}%</div>
+      <div className="text-sm opacity-70 mt-1">{phase === "preload" ? "Analyzing..." : "Compatibility"}</div>
+    </div>
+  </div>
+</div>
     </div>
 
     {/* Right partner card */}
@@ -770,7 +786,7 @@
             <Card title="Real-time Report" className="h-full w-full">
 
 {/* This wrapper matches the exact layout of the scroll area */}
-<div className="relative">
+<div className="relative w-full min-w-0">
 
   {/* REPORT BOX */}
   <pre

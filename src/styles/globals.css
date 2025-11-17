@@ -938,6 +938,88 @@ body, input, button, select { transition: background-color .25s, color .25s, bor
 }
 .footer-panel a:hover { opacity: 0.92; }
 
+/* --- GLOBAL SAFETY --- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* ensure root can't scroll horizontally (already set but keep as safeguard) */
+html, body {
+  overflow-x: hidden;
+}
+
+/* Force flex/grid children to be allowed to shrink */
+.card,
+#compat-grid > div,
+.card > .flex-1,
+.report-box,
+.footer-panel {
+  min-width: 0; /* important for flex children to shrink properly */
+  width: 100%;
+  box-sizing: border-box;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+}
+
+/* Make the compatibility grid adaptive instead of fixed 360px column */
+#compat-grid {
+  display: grid !important;
+  gap: 1.5rem !important;
+  /* center column will grow up to 360px but may shrink below that */
+  grid-template-columns: 1fr minmax(260px, 360px) 1fr;
+  align-items: stretch;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* Mobile: single column and safe inner padding */
+@media (max-width: 767px) {
+  #compat-grid {
+    grid-template-columns: 1fr !important;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* reduce large internal paddings that can push width */
+  .card, .report-box, .footer-panel {
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    border-radius: 0.9rem;
+    overflow: hidden; /* prevent internal children from creating horizontal scroll */
+  }
+
+  /* ensure center-column elements are centered without absolute positioning */
+  #compat-grid .center-column {
+    position: static !important;
+    margin: 0 auto !important;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* tooltip safety: never exceed viewport */
+  .terms-tooltip {
+    max-width: calc(100% - 2rem);
+    left: 1rem !important;
+    right: 1rem !important;
+    box-sizing: border-box;
+  }
+
+  /* Make buttons and long labels wrap instead of expanding container */
+  .btn, button, label, .text-sm, .text-xs {
+    min-width: 0;
+    white-space: normal;
+    word-break: break-word;
+  }
+}
+
+/* Extra: debug helper you can enable while testing (remove later)
+*:focus { outline: 1px dashed rgba(0,0,0,0.06); } */
+
+
 /* responsive adjustments */
 @media (max-width: 767px) {
   .footer-panel { border-radius: 20px; padding: 1rem; }
